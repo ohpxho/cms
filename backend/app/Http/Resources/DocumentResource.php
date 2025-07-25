@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\UserResource;
+
+class DocumentResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+          'name' => $this->name,
+          'issuing_authority' => $this->issuing_authority,
+          'date_issued' => $this->date_issued,
+          'date_expired' => $this->date_expired,
+          'attachment' => $this->attachment,
+          'remarks' => $this->remarks,
+          'status' => $this->status,
+          'last_sent_email' => $this->last_sent_email,
+          'category' => new CategoryResource($this->whenLoaded('category')),
+          'created_by' => new UserResource($this->whenLoaded('createdBy')),
+          'updated_by' => new UserResource($this->whenLoaded('updated_by'))
+        ];
+    }
+}
