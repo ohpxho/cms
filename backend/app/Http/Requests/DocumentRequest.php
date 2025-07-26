@@ -11,7 +11,7 @@ class DocumentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -31,8 +31,6 @@ class DocumentRequest extends FormRequest
           'status'           => 'nullable|string|max:255',
           'last_sent_email'  => 'nullable|date',
           'category_id'      => 'required|exists:categories,id',
-          'created_by'       => 'required|exists:users,id',
-          'updated_by'       => 'nullable|exists:users,id',
         ];
     }
 }

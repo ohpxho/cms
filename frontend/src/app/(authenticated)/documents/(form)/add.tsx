@@ -31,6 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
+import { toast, Toaster } from "sonner";
 import { addDocument } from "../apis";
 
 const documentSchema = z.object({
@@ -62,7 +63,7 @@ interface PropTypes {
 }
 
 export default function AddDocumentButton({ categories }: PropTypes) {
-	const [isLoading, setisLoading] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const form = useForm<documentSchemaType>({
 		resolver: zodResolver(documentSchema),
@@ -78,11 +79,31 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 	});
 
 	const onSubmit = async (data: documentSchemaType) => {
-		try {
-			setisLoading(true);
-			const formData = new FormData();
-			if (data.attachment) formData.append("file", data.attachment);
-		} catch (error: Error | AxiosError | unknown) {}
+		setIsLoading(true);
+
+		const formData = new FormData();
+		formData.append("name", data.name);
+		formData.append("issuing_authority", data.issuing_authority);
+		formData.append("remarks", data.remarks);
+		formData.append("category_id", data.category);
+		formData.append("date_issued", data.date_issued.toDateString());
+		formData.append("date_expired", data.date_expired.toDateString());
+
+		if (data.attachment) formData.append("attachment", data.attachment);
+
+		const response = await addDocument(formData);
+
+		if (!response.success) {
+			toast.error("Failed to Save the Document", {
+				description: `${response.error}`,
+			});
+		} else {
+			toast.success("New document added", {
+				description: "Document has been uploaded successfuly",
+			});
+			form.reset();
+		}
+		setIsLoading(false);
 	};
 
 	return (
@@ -108,6 +129,7 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="space-y-10"
 						encType="multipart/form-data"
+						method="POST"
 					>
 						<div className="flex flex-col gap-6 w-full">
 							<FormField

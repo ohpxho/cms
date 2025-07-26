@@ -16,7 +16,7 @@ class Document extends Model
       'issuing_authority',
       'date_issued',
       'date_expired',
-      'attachments',
+      'attachment',
       'category_id',
       'created_by',
       'uploaded_by',
