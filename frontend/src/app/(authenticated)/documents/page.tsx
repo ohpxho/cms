@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { toast, Toaster } from "sonner";
-import DocumentsTable from "./table";
+import DocumentsTable from "./(table)/table";
 import { getCategories, getDocuments } from "./apis";
 import useSWR from "swr";
 
@@ -69,8 +69,8 @@ export default function DocumentsPage() {
 					</div>
 					<TabsContent value="open" className="w-full mt-4">
 						<DocumentsTable
-							categories={categories?.data}
-							documents={documents?.data}
+							categories={categories?.data || []}
+							documents={documents?.data || []}
 						/>
 					</TabsContent>
 					<TabsContent value="archived"></TabsContent>
