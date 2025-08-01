@@ -70,7 +70,7 @@ export default function DocumentsPage() {
 					<TabsContent value="open" className="w-full mt-4">
 						<DocumentsTable
 							categories={categories?.data || []}
-							documents={documents?.data || []}
+							documents={documents || []}
 						/>
 					</TabsContent>
 					<TabsContent value="archived"></TabsContent>

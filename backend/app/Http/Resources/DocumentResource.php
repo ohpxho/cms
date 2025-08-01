@@ -23,7 +23,6 @@ class DocumentResource extends JsonResource
           'date_expired' => $this->date_expired,
           'attachment' => $this->attachment,
           'remarks' => $this->remarks,
-          'status' => $this->status,
           'last_sent_email' => $this->last_sent_email,
           'category' => new CategoryResource($this->whenLoaded('category')),
           'created_by' => new UserResource($this->whenLoaded('createdBy')),

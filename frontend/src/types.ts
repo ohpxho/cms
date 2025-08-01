@@ -1,4 +1,8 @@
-export interface User {}
+export interface User {
+	id: number;
+	name: string;
+	email: string;
+}
 
 export interface Category {
 	id: number;
@@ -18,4 +22,5 @@ export interface Document {
 	created_by: User;
 	updated_by: User;
 	last_sent_email?: Date;
+	desc?: string;
 }

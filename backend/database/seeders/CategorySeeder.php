@@ -15,19 +15,19 @@ class CategorySeeder extends Seeder
     {
       Category::firstOrCreate([
         'name' => 'License',
-        'color' => '#0000',
+        'color' => '#000000',
         'desc' => ''
       ]);
       
       Category::firstOrCreate([
         'name' => 'Subscriptions',
-        'color' => '#0000',
+        'color' => '#000000',
         'desc' => ''
       ]);
 
       Category::firstOrCreate([
         'name' => 'License',
-        'color' => '#0000',
+        'color' => '#000000',
         'desc' => ''
       ]);
     }

@@ -20,11 +20,11 @@ return new class extends Migration
             $table->date('date_expired')->required();
             $table->string('attachment')->nullable();
             $table->string('remarks')->nullable();
-            $table->string('status')->default('uploaded');
             $table->date('last_sent_email')->nullable();
+            $table->boolean('is_active')->default(1);
 
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
-            $table->foreignId('created_by')->nullable()->contrained('uers')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->contrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->contrained('users')->onDelete('set null');
         });
     }

@@ -30,8 +30,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown, MoreHorizontal, Search, Columns2 } from "lucide-react";
 import AddDocumentButton from "../(form)/add";
 import { Category, Document } from "@/types";
-import columns from "./columns-definition";
+import columns from "./definition";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ViewDocument from "../(form)/view";
 
 interface PropTypes {
 	categories: Category[];
@@ -43,7 +44,9 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
 
-	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+		date_issued: false,
+	});
 	const [rowSelection, setRowSelection] = useState({});
 	const table = useReactTable({
 		data: documents,
@@ -63,8 +66,6 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 			rowSelection,
 		},
 	});
-
-	useEffect(() => {}, [selectedRowId]);
 
 	return (
 		<div className="w-full">
@@ -130,12 +131,12 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 							</TableRow>
 						))}
 					</TableHeader>
-					<TableBody>
+					<TableBody className="text-gray-600">
 						{table.getRowModel()?.rows?.length ? (
 							table?.getRowModel().rows.map((row) => (
 								<TableRow
 									key={row.id}
-									className="cursor-pointer"
+									className="group cursor-pointer hover:text-black"
 									data-state={row.getIsSelected() && "selected"}
 									onClick={() => setSelectedRowId(Number(row.id))}
 								>
@@ -187,12 +188,11 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 				</div>
 			</div>
 
-			<Dialog
-				open={selectedRowId != null ? true : false}
-				onOpenChange={() => setSelectedRowId(null)}
-			>
-				<DialogContent>TEST</DialogContent>
-			</Dialog>
+			<ViewDocument
+				id={selectedRowId}
+				setId={setSelectedRowId}
+				data={selectedRowId != null ? documents[selectedRowId] : null}
+			/>
 		</div>
 	);
 }

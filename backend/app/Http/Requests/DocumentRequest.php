@@ -28,7 +28,6 @@ class DocumentRequest extends FormRequest
           'date_expired'     => 'required|date|after_or_equal:date_issued',
           'attachment'       => 'sometimes|file|max:10240', // Or 'file|mimes:pdf,jpg,...' if it's a file
           'remarks'          => 'nullable|string|max:255',
-          'status'           => 'nullable|string|max:255',
           'last_sent_email'  => 'nullable|date',
           'category_id'      => 'required|exists:categories,id',
         ];

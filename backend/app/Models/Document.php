@@ -22,7 +22,6 @@ class Document extends Model
       'uploaded_by',
       'last_sent_email',
       'remarks',
-      'status' 
     ];
     
     protected $with = [
