@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Document extends Model
+class History extends Model
 {
-    /** @use HasFactory<\Database\Factories\DocumentFactory> */
-    use HasFactory; 
-    
+    /** @use HasFactory<\Database\Factories\HistoryFactory> */
+    use HasFactory;
+
     protected $fillable = [
       'name',
       'category',
@@ -20,6 +20,7 @@ class Document extends Model
       'category_id',
       'created_by',
       'uploaded_by',
+      'document_id',
       'last_sent_email',
       'remarks',
     ];
@@ -28,8 +29,7 @@ class Document extends Model
       'category',
       'createdBy',
       'updatedBy',
-      'history',
-      'rule'
+      'document'
     ];
 
     protected $casts = [
@@ -38,6 +38,10 @@ class Document extends Model
       'last_sent_email' => 'datetime'
     ];
     
+    public function document() {
+      return $this->belongsTo(Document::class, 'document_id');
+    }
+
     public function category() {
       return $this->belongsTo(Category::class, 'category_id');
     }
@@ -48,13 +52,5 @@ class Document extends Model
 
     public function updatedBy() {
       return $this->belongsTo(User::class, 'updated_by');
-    }
-    
-    public function history() {
-      return $this->hasMany(History::class, 'document_id');
-    }
-    
-    public function rule() {
-      return $this->hasOne(NotificationRules::class, 'document_id');
     }
 }

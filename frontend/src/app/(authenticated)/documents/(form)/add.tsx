@@ -34,7 +34,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
 import { addDocument } from "../apis";
 
-const documentSchema = z.object({
+const step1DocumentSchema = z.object({
 	name: z.string().min(1, { message: "Name is required" }),
 	issuing_authority: z
 		.string()
@@ -45,8 +45,19 @@ const documentSchema = z.object({
 		.file()
 		.max(5 * 1024 * 1024, { message: "Max file size is 5MB" })
 		.optional(),
-	remarks: z.string(),
 	category: z.string().min(1, { message: "Select a category" }),
+});
+
+const step2DocumentSchema = z.object({
+	remarks: z.string().optional(),
+	notify_before: z.number(),
+	time_unit: z.enum(["Day", "Week", "Month"]),
+	frequency: z.enum(["Once", "Everyday", "Twice", "Every Other Day"]),
+});
+
+const documentSchema = z.object({
+	...step1DocumentSchema.shape,
+	...step2DocumentSchema.shape,
 });
 
 type documentSchemaType = z.infer<typeof documentSchema>;
@@ -64,30 +75,38 @@ interface PropTypes {
 
 export default function AddDocumentButton({ categories }: PropTypes) {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [currentStep, setCurrentStep] = useState(0);
 
 	const form = useForm<documentSchemaType>({
 		resolver: zodResolver(documentSchema),
-		defaultValues: {
-			name: "",
-			issuing_authority: "",
-			date_issued: undefined,
-			date_expired: undefined,
-			attachment: undefined,
-			remarks: "",
-			category: "",
-		},
+		mode: "onChange",
 	});
+
+	const handleNext = async () => {
+		let isValid = false;
+
+		isValid = await form.trigger([
+			"name",
+			"issuing_authority",
+			"date_issued",
+			"date_expired",
+			"attachment",
+			"category",
+		]);
+
+		if (isValid) setCurrentStep(currentStep + 1);
+	};
 
 	const onSubmit = async (data: documentSchemaType) => {
 		setIsLoading(true);
 
 		const formData = new FormData();
-		formData.append("name", data.name);
-		formData.append("issuing_authority", data.issuing_authority);
-		formData.append("remarks", data.remarks);
-		formData.append("category_id", data.category);
-		formData.append("date_issued", data.date_issued.toDateString());
-		formData.append("date_expired", data.date_expired.toDateString());
+		// formData.append("name", data.name);
+		// formData.append("issuing_authority", data.issuing_authority);
+		// formData.append("remarks", data.remarks);
+		// formData.append("category_id", data.category);
+		// formData.append("date_issued", data.date_issued.toDateString());
+		// formData.append("date_expired", data.date_expired.toDateString());
 
 		if (data.attachment) formData.append("attachment", data.attachment);
 
@@ -119,7 +138,7 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[500px]">
 				<DialogHeader>
-					<DialogTitle>New Document</DialogTitle>
+					<DialogTitle className="text-2xl">New Document</DialogTitle>
 					<DialogDescription>
 						Add new document for monitoring.
 					</DialogDescription>
@@ -287,7 +306,8 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 									Cancel
 								</Button>
 							</DialogClose>
-							<Button type="submit" disabled={isLoading}>
+							<Button onClick={handleNext}>Next</Button>
+							{/* 							<Button type="submit" disabled={isLoading}>
 								{isLoading ? (
 									<span className="flex items-center gap-2">
 										<LoaderCircle className="animate-spin w-4 h-4" />
@@ -296,7 +316,7 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 								) : (
 									"Save changes"
 								)}
-							</Button>
+							</Button> */}
 						</DialogFooter>
 					</form>
 				</Form>

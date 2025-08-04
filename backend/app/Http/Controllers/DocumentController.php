@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\DocumentRequest;
+use App\Http\Requests\Document\StoreDocumentRequest;
 use App\Models\Document;
 use App\Http\Resources\DocumentResource;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +15,7 @@ class DocumentController extends Controller
     return DocumentResource::collection(Document::all());
   }
 
-  public function store(DocumentRequest $request)
+  public function store(StoreDocumentRequest $request)
   {
     $validated = $request->validated();
 
