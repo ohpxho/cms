@@ -3,3 +3,9 @@ export enum Status {
 	EXPIRINGSOON = "expiring soon",
 	EXPIRED = "expired",
 }
+
+export enum TimeUnit {
+	DAY = "Day",
+	WEEK = "Week",
+	MONTH = "Month",
+}

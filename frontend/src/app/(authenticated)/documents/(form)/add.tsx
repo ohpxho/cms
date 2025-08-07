@@ -24,28 +24,37 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
+	FormDescription,
 } from "@/components/ui/form";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Info, BellRing, Upload, File } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
 import { addDocument } from "../apis";
+import { TimeUnit } from "@/enums";
 
 const step1DocumentSchema = z.object({
-	name: z.string().min(1, { message: "Name is required" }),
-	issuing_authority: z
-		.string()
-		.min(1, { message: "Issuing Authority is required" }),
+	name: z.string("Name is required").min(1),
+	issuing_authority: z.string("Issuing Authority is required").min(1),
 	date_issued: z.date("Date issued is required"),
 	date_expired: z.date("Date expired is required"),
 	attachment: z
 		.file()
 		.max(5 * 1024 * 1024, { message: "Max file size is 5MB" })
 		.optional(),
-	category: z.string().min(1, { message: "Select a category" }),
+	category: z.string("Category is required"),
 });
 
 const step2DocumentSchema = z.object({
@@ -76,6 +85,8 @@ interface PropTypes {
 export default function AddDocumentButton({ categories }: PropTypes) {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState(0);
+	const [isDragOver, setIsDragOver] = useState(false);
+	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 	const form = useForm<documentSchemaType>({
 		resolver: zodResolver(documentSchema),
@@ -130,7 +141,7 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 			<DialogTrigger asChild>
 				<Button
 					variant="outline"
-					className="bg-gray-950 text-white cursor-pointer hover:bg-black hover:text-white"
+					className="cursor-pointer bg-gray-950 text-white hover:bg-black hover:text-white"
 				>
 					<Plus className="h-4 w-4" strokeWidth={1.5} />
 					New Document
@@ -150,164 +161,430 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 						encType="multipart/form-data"
 						method="POST"
 					>
-						<div className="flex flex-col gap-6 w-full">
-							<FormField
-								control={form.control}
-								name="name"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Name</FormLabel>
-										<FormControl>
-											<Input placeholder="Document Name" {...field} />
-										</FormControl>
-										<FormMessage className="  text-xs" />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="issuing_authority"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Issuing Authority</FormLabel>
-										<FormControl>
-											<Input placeholder="Issuing Authority" {...field} />
-										</FormControl>
-										<FormMessage className="  text-xs" />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="category"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Category</FormLabel>
-										<FormControl>
-											<Combobox
-												options={categories.map((category) => ({
-													value: category.id.toString(),
-													label: category.name,
-												}))}
-												value={field.value?.toString() || ""}
-												onValueChange={field.onChange}
-												placeholder="Select a category"
-												popoverWidth="100%"
-												className={cn(
-													"bg-white placeholder:text-muted-foreground font-normal",
-													{
-														"border-red-500": !!form.formState.errors.category,
-													}
+						{currentStep === 0 ? (
+							<>
+								<div className="flex w-full flex-col gap-6">
+									<div className="space-y-4">
+										<h3 className="flex items-center gap-2 text-lg font-semibold">
+											<Info className="h-5 w-5" strokeWidth={1.5} />
+											<span>Document Information</span>
+										</h3>
+										<p className="text-muted-foreground text-sm">
+											Enter the basic information about your document.
+										</p>
+									</div>
+
+									<div className="space-y-6">
+										<FormField
+											control={form.control}
+											name="name"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel className="">Document Name</FormLabel>
+													<FormControl>
+														<Input
+															placeholder="e.g., License, Subscriptions, Certificate"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage className="text-xs" />
+												</FormItem>
+											)}
+										/>
+
+										<FormField
+											control={form.control}
+											name="issuing_authority"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel className="">Issuing Authority</FormLabel>
+													<FormDescription className="text-muted-foreground text-sm">
+														The organization or authority that issued or
+														provided this
+													</FormDescription>
+													<FormControl>
+														<Input
+															placeholder="e.g., Suppliers, Government Offices"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage className="text-xs" />
+												</FormItem>
+											)}
+										/>
+
+										<FormField
+											control={form.control}
+											name="category"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel className="">Category</FormLabel>
+													<FormControl>
+														<Combobox
+															options={categories.map((category) => ({
+																value: category.id.toString(),
+																label: category.name,
+															}))}
+															value={field.value?.toString() || ""}
+															onValueChange={field.onChange}
+															placeholder="Select a category"
+															popoverWidth="100%"
+															className={cn(
+																"placeholder:text-muted-foreground bg-white font-normal",
+																{
+																	"border-red-500":
+																		!!form.formState.errors.category,
+																}
+															)}
+														/>
+													</FormControl>
+													<FormMessage className="text-xs" />
+												</FormItem>
+											)}
+										/>
+
+										<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+											<FormField
+												control={form.control}
+												name="date_issued"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel className="">Date Issued</FormLabel>
+														<FormControl>
+															<Input
+																type="date"
+																{...field}
+																value={
+																	field.value
+																		? typeof field.value === "string"
+																			? field.value
+																			: field.value.toISOString().split("T")[0]
+																		: ""
+																}
+																onChange={(e) =>
+																	field.onChange(
+																		e.target.value
+																			? new Date(e.target.value)
+																			: undefined
+																	)
+																}
+															/>
+														</FormControl>
+														<FormMessage className="text-xs" />
+													</FormItem>
 												)}
 											/>
-										</FormControl>
-										<FormMessage className="  text-xs" />
-									</FormItem>
-								)}
-							/>
-							<div className="grid grid-cols-2 gap-4">
-								<FormField
-									control={form.control}
-									name="date_issued"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Date Issued</FormLabel>
-											<FormControl>
-												<Input
-													type="date"
-													{...field}
-													value={
-														field.value
-															? typeof field.value === "string"
-																? field.value
-																: field.value.toISOString().split("T")[0]
-															: ""
-													}
-													onChange={(e) =>
-														field.onChange(
-															e.target.value
-																? new Date(e.target.value)
-																: undefined
-														)
-													}
-												/>
-											</FormControl>
-											<FormMessage className="  text-xs" />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="date_expired"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Date Expired</FormLabel>
-											<FormControl>
-												<Input
-													type="date"
-													{...field}
-													value={
-														field.value
-															? typeof field.value === "string"
-																? field.value
-																: field.value.toISOString().split("T")[0]
-															: ""
-													}
-													onChange={(e) =>
-														field.onChange(
-															e.target.value
-																? new Date(e.target.value)
-																: undefined
-														)
-													}
-												/>
-											</FormControl>
-											<FormMessage className="  text-xs" />
-										</FormItem>
-									)}
-								/>
-							</div>
-							<FormField
-								control={form.control}
-								name="attachment"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Attachment</FormLabel>
-										<FormControl>
-											<Input
-												type="file"
-												accept="image/*,application/pdf"
-												onChange={(e) => {
-													field.onChange(e.target.files?.[0]);
-												}}
+											<FormField
+												control={form.control}
+												name="date_expired"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel className="">Expiration Date</FormLabel>
+														<FormControl>
+															<div>
+																<Input
+																	type="date"
+																	className="relative w-full"
+																	{...field}
+																	value={
+																		field.value
+																			? typeof field.value === "string"
+																				? field.value
+																				: field.value
+																						.toISOString()
+																						.split("T")[0]
+																			: ""
+																	}
+																	onChange={(e) =>
+																		field.onChange(
+																			e.target.value
+																				? new Date(e.target.value)
+																				: undefined
+																		)
+																	}
+																/>
+															</div>
+														</FormControl>
+														<FormMessage className="text-xs" />
+													</FormItem>
+												)}
 											/>
-										</FormControl>
-										<FormMessage className="  text-xs" />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="remarks"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Remarks</FormLabel>
-										<FormControl>
-											<Textarea {...field}></Textarea>
-										</FormControl>
-										<FormMessage className="  text-xs" />
-									</FormItem>
-								)}
-							/>
-						</div>
-						<DialogFooter>
-							<DialogClose asChild>
-								<Button variant="outline" type="button">
-									Cancel
-								</Button>
-							</DialogClose>
-							<Button onClick={handleNext}>Next</Button>
-							{/* 							<Button type="submit" disabled={isLoading}>
+										</div>
+
+										<FormField
+											control={form.control}
+											name="attachment"
+											render={({ field }) => {
+												const handleFileChange = (file: File | null) => {
+													field.onChange(file);
+													setSelectedFile(file);
+												};
+
+												const handleDrop = (e: React.DragEvent) => {
+													e.preventDefault();
+													setIsDragOver(false);
+													const files = e.dataTransfer.files;
+													if (files && files[0]) {
+														handleFileChange(files[0]);
+													}
+												};
+
+												const handleDragOver = (e: React.DragEvent) => {
+													e.preventDefault();
+													setIsDragOver(true);
+												};
+
+												const handleDragLeave = (e: React.DragEvent) => {
+													e.preventDefault();
+													setIsDragOver(false);
+												};
+
+												return (
+													<FormItem>
+														<FormLabel className="">
+															Document Attachment
+														</FormLabel>
+														<FormDescription className="text-muted-foreground text-sm">
+															Upload a copy of your document (PDF or image
+															files, max 5MB)
+														</FormDescription>
+														<FormControl>
+															<div className="relative bg-gray-50 hover:bg-gray-100">
+																<Input
+																	type="file"
+																	accept="image/*,application/pdf"
+																	onChange={(e) =>
+																		handleFileChange(
+																			e.target.files?.[0] || null
+																		)
+																	}
+																	className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+																/>
+																<div
+																	className={cn(
+																		"relative cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors duration-200 hover:bg-gray-50/50",
+																		{
+																			"border-primary bg-primary/5": isDragOver,
+																			"border-gray-300": !isDragOver,
+																			"border-red-500":
+																				!!form.formState.errors.attachment,
+																		}
+																	)}
+																	onDrop={handleDrop}
+																	onDragOver={handleDragOver}
+																	onDragLeave={handleDragLeave}
+																>
+																	{selectedFile ? (
+																		<div className="flex items-center justify-center gap-3">
+																			<File className="text-primary h-5 w-5" />
+																			<div className="text-left">
+																				<p className="text-sm font-medium">
+																					{selectedFile.name}
+																				</p>
+																				<p className="text-muted-foreground text-xs">
+																					{(
+																						selectedFile.size /
+																						1024 /
+																						1024
+																					).toFixed(2)}{" "}
+																					MB
+																				</p>
+																			</div>
+																		</div>
+																	) : (
+																		<div className="space-y-4">
+																			<Upload className="text-muted-foreground mx-auto h-5 w-5" />
+																			<div className="space-y-2">
+																				<p className="font-medium">
+																					Drag & drop your file here
+																				</p>
+																				<p className="text-muted-foreground text-sm">
+																					or{" "}
+																					<span className="text-primary hover:text-primary/80 font-medium">
+																						click to browse
+																					</span>
+																				</p>
+																				<p className="text-muted-foreground text-xs">
+																					Supports PDF and image files (max 5MB)
+																				</p>
+																			</div>
+																		</div>
+																	)}
+																</div>
+															</div>
+														</FormControl>
+														<FormMessage className="text-xs" />
+													</FormItem>
+												);
+											}}
+										/>
+									</div>
+								</div>
+								<DialogFooter>
+									<DialogClose asChild>
+										<Button variant="outline" type="button">
+											Cancel
+										</Button>
+									</DialogClose>
+									<Button onClick={handleNext} type="button">
+										Next
+									</Button>
+								</DialogFooter>
+							</>
+						) : (
+							<div className="flex w-full flex-col gap-6">
+								<div className="space-y-4">
+									<h3 className="flex items-center gap-2 text-lg font-semibold">
+										<BellRing className="h-5 w-5" strokeWidth={1.5} />
+										<span>Notification Settings</span>
+									</h3>
+									<p className="text-muted-foreground text-sm">
+										Set up when and how you'd like to be notified about document
+										expiration.
+									</p>
+								</div>
+								<div className="space-y-4">
+									<div className="space-y-3">
+										<FormLabel className="">
+											Notify me before document expires
+										</FormLabel>
+										<div className="flex items-center gap-3">
+											<FormField
+												control={form.control}
+												name="notify_before"
+												render={({ field }) => (
+													<FormItem>
+														<FormControl>
+															<Input
+																type="number"
+																placeholder="30"
+																min="1"
+																max="365"
+																className="w-24 text-center [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+																{...field}
+																onChange={(e) =>
+																	field.onChange(parseInt(e.target.value) || 0)
+																}
+															/>
+														</FormControl>
+														<FormMessage className="text-xs" />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={form.control}
+												name="time_unit"
+												render={({ field }) => (
+													<FormItem>
+														<FormControl>
+															<Select
+																value={field.value}
+																onValueChange={field.onChange}
+																defaultValue="Day"
+															>
+																<SelectTrigger className="w-32">
+																	<SelectValue placeholder="Select unit" />
+																</SelectTrigger>
+																<SelectContent>
+																	<SelectItem value="Day">Day(s)</SelectItem>
+																	<SelectItem value="Week">Week(s)</SelectItem>
+																	<SelectItem value="Month">
+																		Month(s)
+																	</SelectItem>
+																</SelectContent>
+															</Select>
+														</FormControl>
+														<FormMessage className="text-xs" />
+													</FormItem>
+												)}
+											/>
+										</div>
+									</div>
+								</div>
+								<FormField
+									control={form.control}
+									name="frequency"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel className="">Notification Frequency</FormLabel>
+											<FormDescription className="text-muted-foreground text-sm">
+												How often would you like to receive notifications?
+											</FormDescription>
+											<FormControl>
+												<Select
+													value={field.value}
+													onValueChange={field.onChange}
+													defaultValue="Once"
+												>
+													<SelectTrigger>
+														<SelectValue placeholder="Select frequency" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="Once">Once</SelectItem>
+														<SelectItem value="Everyday">Every Day</SelectItem>
+														<SelectItem value="Twice">Twice Daily</SelectItem>
+														<SelectItem value="Every Other Day">
+															Every Other Day
+														</SelectItem>
+													</SelectContent>
+												</Select>
+											</FormControl>
+											<FormMessage className="text-xs" />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="remarks"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel className="">Additional Notes</FormLabel>
+											<FormDescription className="text-muted-foreground text-sm">
+												Add any additional information or special instructions
+												for this document.
+											</FormDescription>
+											<FormControl>
+												<Textarea
+													placeholder="Enter any additional notes or remarks..."
+													rows={4}
+													className="resize-none"
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage className="text-xs" />
+										</FormItem>
+									)}
+								/>
+
+								<DialogFooter className="flex justify-between">
+									<Button
+										type="button"
+										variant="outline"
+										onClick={() => setCurrentStep(currentStep - 1)}
+									>
+										Back
+									</Button>
+									<div className="flex gap-2">
+										<DialogClose asChild>
+											<Button variant="outline" type="button">
+												Cancel
+											</Button>
+										</DialogClose>
+										<Button type="submit" disabled={isLoading}>
+											{isLoading ? (
+												<span className="flex items-center gap-2">
+													<LoaderCircle className="h-4 w-4 animate-spin" />
+													Saving...
+												</span>
+											) : (
+												"Save Document"
+											)}
+										</Button>
+									</div>
+								</DialogFooter>
+							</div>
+						)}
+						{/* 							<Button type="submit" disabled={isLoading}>
 								{isLoading ? (
 									<span className="flex items-center gap-2">
 										<LoaderCircle className="animate-spin w-4 h-4" />
@@ -317,7 +594,6 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 									"Save changes"
 								)}
 							</Button> */}
-						</DialogFooter>
 					</form>
 				</Form>
 			</DialogContent>

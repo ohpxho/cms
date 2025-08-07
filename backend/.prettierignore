@@ -1,0 +1,46 @@
+# Dependencies
+/node_modules
+/vendor
+
+# Laravel specific
+/bootstrap/cache
+/storage
+/public/hot
+/public/storage
+/public/build
+
+# Environment files
+.env*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+storage/logs/*
+
+# Compiled assets
+/public/build
+/public/mix-manifest.json
+
+# Cache files
+/bootstrap/cache/*
+
+# Auto-generated files
+*.map
+_ide_helper*.php
+.phpstorm.meta.php
+
+# Package manager lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Database
+*.sqlite
+*.sqlite-journal
