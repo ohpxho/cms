@@ -30,11 +30,10 @@ class DocumentResource extends JsonResource
       'notification_rules' => $this->whenLoaded('rule', funciton () {
           return [
             'notify_before' => $this->rule->notify_before,
-'time_unit'=> $this->rule->time_unit,
+            'time_unit'=> $this->rule->time_unit,
             'frequency' => $this->rule->frequency
           ]
-                                                      }),
-
+      }),
     ];
   }
 }
