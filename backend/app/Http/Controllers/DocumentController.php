@@ -14,16 +14,22 @@ class DocumentController extends Controller
 {
   public function index(Request $request)
   {
-    return DocumentResource::collection(Document::all());
+    $documents = Document::with(['category', 'createdBy', 'updatedBy', 'rule'])->get();
+    return DocumentResource::collection($documents);
   }
 
   public function store(StoreDocumentRequest $doc, StoreNotificationRules $notif)
   {
+    // Debug: Log incoming request data
+    \Log::info('Document store request data:', [
+      'doc_data' => $doc->all(),
+      'notif_data' => $notif->all()
+    ]);
+
     DB::beginTransaction();
 
     try {
       $validated_doc = $doc->validated();
-      $validated_notif = $notif->validated();
 
       if ($doc->hasFile('attachment')) {
         $path = $doc->file('attachment')->store('docs', 'public');
@@ -38,17 +44,22 @@ class DocumentController extends Controller
 
       $document = Document::create($validated_doc);
 
+      $validated_notif = $notif->validated();
       $validated_notif['document_id'] = $document->id;
-      $document->notificationRules()->create($validated_notif);
+      $document->rule()->create($validated_notif);
 
       DB::commit();
 
-      $document->load(['category', 'updatedBy', 'createdBy', 'notificationRules']);
+      $document->load(['category', 'updatedBy', 'createdBy', 'rule']);
       return new DocumentResource($document);
 
     } catch (\Exception $e) {
       DB::rollback();
-      return response()->json(['response' => false, 'message' => 'Failed to create document and notification rule.'], 422);
+      \Log::error('Document creation failed:', [
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+      ]);
+      return response()->json(['response' => false, 'message' => 'Failed to create document and notification rule.', 'error' => $e->getMessage()], 422);
     }
   }
 }

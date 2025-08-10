@@ -3,6 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\TimeUnit;
+use App\Enums\Frequency;
+
 
 return new class () extends Migration {
   /**
@@ -14,8 +17,8 @@ return new class () extends Migration {
       $table->id();
       $table->timestamps();
       $table->integer('notify_before');
-      $table->enum('time_unit', ['Day', 'Week', 'Month']);
-      $table->enum('frequency', ['Once', 'Everyday', 'Every Other Day', 'Twice']);
+      $table->enum('time_unit', array_column(TimeUnit::cases(), 'value'));
+      $table->enum('frequency', array_column(Frequency::cases(), 'value'));
 
       $table->foreignId('document_id')->nullable()->constrained('documents')->onDelete('set null');
     });

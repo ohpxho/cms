@@ -17,7 +17,7 @@ export function getStatusOfDocumentByEXpiration(expiration: Date) {
 	if (day <= 0) {
 		return Status.EXPIRED;
 	} else if (day <= 7) {
-		return Status.EXPIRINGSOON;
+		return Status.EXPIRING_SOON;
 	} else {
 		return Status.ACTIVE;
 	}

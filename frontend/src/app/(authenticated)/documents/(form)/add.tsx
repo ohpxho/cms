@@ -43,7 +43,7 @@ import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
 import { addDocument } from "../apis";
-import { TimeUnit } from "@/enums";
+import { TimeUnit, Frequency } from "@/enums";
 
 const step1DocumentSchema = z.object({
 	name: z.string("Name is required").min(1),
@@ -59,9 +59,9 @@ const step1DocumentSchema = z.object({
 
 const step2DocumentSchema = z.object({
 	remarks: z.string().optional(),
-	notify_before: z.number(),
-	time_unit: z.enum(["Day", "Week", "Month"]),
-	frequency: z.enum(["Once", "Everyday", "Twice", "Every Other Day"]),
+	notify_before: z.number("Invalid Input"),
+	time_unit: z.enum(TimeUnit, "Unit is required"),
+	frequency: z.enum(Frequency, "Frequency is required"),
 });
 
 const documentSchema = z.object({
@@ -112,12 +112,15 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 		setIsLoading(true);
 
 		const formData = new FormData();
-		// formData.append("name", data.name);
-		// formData.append("issuing_authority", data.issuing_authority);
-		// formData.append("remarks", data.remarks);
-		// formData.append("category_id", data.category);
-		// formData.append("date_issued", data.date_issued.toDateString());
-		// formData.append("date_expired", data.date_expired.toDateString());
+		formData.append("name", data.name);
+		formData.append("issuing_authority", data.issuing_authority);
+		formData.append("remarks", data.remarks || "");
+		formData.append("category_id", data.category);
+		formData.append("date_issued", data.date_issued.toISOString().split('T')[0]);
+		formData.append("date_expired", data.date_expired.toISOString().split('T')[0]);
+    formData.append("notify_before", data.notify_before.toString());
+    formData.append("time_unit", data.time_unit);
+    formData.append("frequency", data.frequency);
 
 		if (data.attachment) formData.append("attachment", data.attachment);
 
@@ -480,15 +483,15 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 															<Select
 																value={field.value}
 																onValueChange={field.onChange}
-																defaultValue="Day"
+																defaultValue={TimeUnit.DAY}
 															>
 																<SelectTrigger className="w-32">
 																	<SelectValue placeholder="Select unit" />
 																</SelectTrigger>
-																<SelectContent>
-																	<SelectItem value="Day">Day(s)</SelectItem>
-																	<SelectItem value="Week">Week(s)</SelectItem>
-																	<SelectItem value="Month">
+																<SelectContent className="bg-white">
+																	<SelectItem value={TimeUnit.DAY}>Day(s)</SelectItem>
+																	<SelectItem value={TimeUnit.WEEK}>Week(s)</SelectItem>
+																	<SelectItem value={TimeUnit.MONTH}>
 																		Month(s)
 																	</SelectItem>
 																</SelectContent>
@@ -514,17 +517,17 @@ export default function AddDocumentButton({ categories }: PropTypes) {
 												<Select
 													value={field.value}
 													onValueChange={field.onChange}
-													defaultValue="Once"
+													defaultValue={Frequency.ONCE_A_WEEK}
 												>
 													<SelectTrigger>
 														<SelectValue placeholder="Select frequency" />
 													</SelectTrigger>
-													<SelectContent>
-														<SelectItem value="Once">Once</SelectItem>
-														<SelectItem value="Everyday">Every Day</SelectItem>
-														<SelectItem value="Twice">Twice Daily</SelectItem>
-														<SelectItem value="Every Other Day">
-															Every Other Day
+													<SelectContent className="bg-white">
+														<SelectItem value={Frequency.ONCE_A_WEEK}>Once A Week</SelectItem>
+														<SelectItem value={Frequency.TWICE_A_WEEK}>Twice A Week</SelectItem>
+														<SelectItem value={Frequency.EVERY_OTHER_DAY}>Every Other Day</SelectItem>
+														<SelectItem value={Frequency.EVERYDAY}>
+                                Everyday
 														</SelectItem>
 													</SelectContent>
 												</Select>

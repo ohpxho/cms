@@ -24,13 +24,8 @@ class Document extends Model
       'remarks',
     ];
     
-    protected $with = [
-      'category',
-      'createdBy',
-      'updatedBy',
-      'history',
-      'rule'
-    ];
+    // Removed automatic eager loading to prevent memory issues
+    // Load relationships explicitly when needed
 
     protected $casts = [
       'date_issued' => 'datetime',

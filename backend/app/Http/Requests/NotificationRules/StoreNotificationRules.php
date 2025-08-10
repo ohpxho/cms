@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Requests\NotificationRules;
@@ -29,7 +28,6 @@ class StoreNotificationRules extends FormRequest
       'notify_before'      => 'required|numeric',
       'time_unit'     => ['required', new Enum(TimeUnit::class)],
       'frequency'       => ['required', new Enum(Frequency::class)],
-      'document_id'      => 'sometimes|exists:documents,id',
     ];
   }
 }

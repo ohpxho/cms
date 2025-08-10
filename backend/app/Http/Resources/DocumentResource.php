@@ -27,13 +27,13 @@ class DocumentResource extends JsonResource
       'category' => new CategoryResource($this->whenLoaded('category')),
       'created_by' => new UserResource($this->whenLoaded('createdBy')),
       'updated_by' => new UserResource($this->whenLoaded('updatedBy')),
-      'notification_rules' => $this->whenLoaded('rule', funciton () {
+      'notification_rules' => $this->whenLoaded('rule', function () {
           return [
             'notify_before' => $this->rule->notify_before,
             'time_unit'=> $this->rule->time_unit,
             'frequency' => $this->rule->frequency
-          ]
-      }),
+          ];
+      })
     ];
   }
 }
