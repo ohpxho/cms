@@ -8,7 +8,7 @@ export interface Category {
 	id: number;
 	name: string;
 	color: string;
-	desc: string;
+	desc: string | null;
 }
 
 export interface Document {
