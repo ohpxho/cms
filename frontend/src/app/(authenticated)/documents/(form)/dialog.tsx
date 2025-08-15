@@ -72,18 +72,20 @@ const documentSchema = z.object({
 
 type documentSchemaType = z.infer<typeof documentSchema>;
 
+type Mode = "add" | "edit" | "renew";
+
 interface PropTypes {
 	categories?: Category[];
 	data?: Document[];
+	modeType: Mode | null;
 }
 
-export default function FormDialog({ categories, data }: PropTypes) {
+export default function FormDialog({ categories, data, modeType }: PropTypes) {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [mode, setMode] = useState<"add" | "renew" | "edit" | null>(modeType);
 	const [currentStep, setCurrentStep] = useState(0);
 	const [isDragOver, setIsDragOver] = useState(false);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
-	const [isEditing, setIsEditing] = useState<boolean>();
-	const [isRenewing, setIsRenewing] = useState<boolean>();
 
 	const form = useForm<documentSchemaType>({
 		resolver: zodResolver(documentSchema),

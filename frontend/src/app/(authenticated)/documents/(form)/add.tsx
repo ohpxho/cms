@@ -10,7 +10,7 @@ interface PropTypes {
 export default function AddDocumentButton({ categories }: PropTypes) {
 	return (
 		<>
-			<FormDialog categories={categories} />
+			<FormDialog categories={categories} modeType={"add"} />
 		</>
 	);
 }
