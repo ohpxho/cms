@@ -31,7 +31,6 @@ import { ArrowUpDown, MoreHorizontal, Search, Columns2 } from "lucide-react";
 import AddDocumentButton from "../(form)/add";
 import { Category, Document } from "@/types";
 import columns from "./definition";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ViewDocument from "../(form)/view";
 
 interface PropTypes {
@@ -69,23 +68,23 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 
 	return (
 		<div className="w-full">
-			<div className="flex gap-2 justify-between items-center py-4">
+			<div className="flex items-center justify-between gap-2 py-4">
 				<div className="relative flex gap-2">
-					<Button className="text-xs p-1">Overall 2</Button>
-					<Button className="bg-gray-100 text-gray-700 p-1 text-xs">
+					<Button className="p-1 text-xs">Overall 2</Button>
+					<Button className="bg-gray-100 p-1 text-xs text-gray-700">
 						Ongoing 2
 					</Button>
-					<Button className="bg-gray-100 text-gray-700 p-1 text-xs">
+					<Button className="bg-gray-100 p-1 text-xs text-gray-700">
 						Expired 1
 					</Button>
 				</div>
 
-				<div className="flex gap-4 text-gray-500 items-center">
-					<Search className="w-4 h-4 hover:text-black cursor-pointer" />
+				<div className="flex items-center gap-4 text-gray-500">
+					<Search className="h-4 w-4 cursor-pointer hover:text-black" />
 
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Columns2 className="w-4 h-4 hover:text-black cursor-pointer" />
+							<Columns2 className="h-4 w-4 cursor-pointer hover:text-black" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="bg-white">
 							{table
@@ -113,7 +112,7 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 			</div>
 			<div className="overflow-hidden">
 				<Table className="rounded-sm text-sm">
-					<TableHeader className="bg-gray-100 ">
+					<TableHeader className="bg-gray-100">
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id} className="">
 								{headerGroup.headers.map((header) => {
@@ -124,7 +123,7 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 												: flexRender(
 														header.column.columnDef.header,
 														header.getContext()
-												  )}
+													)}
 										</TableHead>
 									);
 								})}

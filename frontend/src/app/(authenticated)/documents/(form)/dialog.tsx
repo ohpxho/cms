@@ -76,11 +76,19 @@ type Mode = "add" | "edit" | "renew";
 
 interface PropTypes {
 	categories?: Category[];
-	data?: Document[];
+	data?: Document;
 	modeType: Mode | null;
+	isOpen: boolean;
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function FormDialog({ categories, data, modeType }: PropTypes) {
+export default function FormDialog({
+	isOpen,
+	setIsOpen,
+	categories,
+	data,
+	modeType,
+}: PropTypes) {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [mode, setMode] = useState<"add" | "renew" | "edit" | null>(modeType);
 	const [currentStep, setCurrentStep] = useState(0);
@@ -145,16 +153,7 @@ export default function FormDialog({ categories, data, modeType }: PropTypes) {
 	};
 
 	return (
-		<Dialog>
-			<DialogTrigger asChild>
-				<Button
-					variant="outline"
-					className="cursor-pointer bg-gray-950 text-white hover:bg-black hover:text-white"
-				>
-					<Plus className="h-4 w-4" strokeWidth={1.5} />
-					New Document
-				</Button>
-			</DialogTrigger>
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogContent className="sm:max-w-[500px]">
 				<DialogHeader>
 					<DialogTitle className="text-2xl">New Document</DialogTitle>
@@ -228,23 +227,46 @@ export default function FormDialog({ categories, data, modeType }: PropTypes) {
 												<FormItem>
 													<FormLabel className="">Category</FormLabel>
 													<FormControl>
-														<Combobox
-															options={categories.map((category) => ({
-																value: category.id.toString(),
-																label: category.name,
-															}))}
-															value={field.value?.toString() || ""}
-															onValueChange={field.onChange}
-															placeholder="Select a category"
-															popoverWidth="100%"
-															className={cn(
-																"placeholder:text-muted-foreground bg-white font-normal",
-																{
-																	"border-red-500":
-																		!!form.formState.errors.category,
-																}
-															)}
-														/>
+														{mode == "add" ? (
+															<Combobox
+																options={categories.map((category) => ({
+																	value: category.id.toString(),
+																	label: category.name,
+																}))}
+																value={field.value?.toString() || ""}
+																onValueChange={field.onChange}
+																placeholder="Select a category"
+																popoverWidth="100%"
+																className={cn(
+																	"placeholder:text-muted-foreground bg-white font-normal",
+																	{
+																		"border-red-500":
+																			!!form.formState.errors.category,
+																	}
+																)}
+															/>
+														) : (
+															<Combobox
+																options={[
+																	{
+																		value: data?.category.id.toString() || "",
+																		label: data?.category.name || "",
+																	},
+																]}
+																value={data?.category.id.toString() || ""}
+																onValueChange={field.onChange}
+																disabled={true}
+																placeholder="Select a category"
+																popoverWidth="100%"
+																className={cn(
+																	"placeholder:text-muted-foreground bg-white font-normal",
+																	{
+																		"border-red-500":
+																			!!form.formState.errors.category,
+																	}
+																)}
+															/>
+														)}
 													</FormControl>
 													<FormMessage className="text-xs" />
 												</FormItem>

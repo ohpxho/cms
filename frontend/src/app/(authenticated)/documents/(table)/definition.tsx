@@ -1,16 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-	DropdownMenuLabel,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ArrowUpDown, History } from "lucide-react";
+import { ArrowUpDown, History } from "lucide-react";
 import { Category, Document } from "@/types";
 import Status from "@/components/status";
 import { formatDateToStandardForm } from "@/lib/date";
@@ -30,6 +21,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import RenewDocument from "../(form)/renew";
 
 const columns: ColumnDef<Document>[] = [
 	{
@@ -58,9 +50,9 @@ const columns: ColumnDef<Document>[] = [
 		accessorKey: "name",
 		header: "Document",
 		cell: ({ row }) => (
-			<div className="capitalize truncate max-w-75 flex gap-1">
+			<div className="flex max-w-75 gap-1 truncate capitalize">
 				{" "}
-				<FileMinus strokeWidth={1} className="w-5 h-5" /> {row.getValue("name")}
+				<FileMinus strokeWidth={1} className="h-5 w-5" /> {row.getValue("name")}
 			</div>
 		),
 	},
@@ -73,7 +65,7 @@ const columns: ColumnDef<Document>[] = [
 			const color = category.color;
 			return (
 				<div
-					className={`capitalize truncate text-xs p-1 rounded-sm w-fit flex gap-1 bg-black text-white`}
+					className={`flex w-fit gap-1 truncate rounded-sm bg-black p-1 text-xs text-white capitalize`}
 				>
 					{name}
 				</div>
@@ -124,7 +116,7 @@ const columns: ColumnDef<Document>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className="flex gap-2">
-					<ClockFading strokeWidth={1.5} className="w-5 h-5" />{" "}
+					<ClockFading strokeWidth={1.5} className="h-5 w-5" />{" "}
 					{row.getValue("due")}
 				</div>
 			);
@@ -143,52 +135,17 @@ const columns: ColumnDef<Document>[] = [
 		enableHiding: false,
 		cell: ({ row }) => {
 			return (
-				<div className="flex py-2 px-1" onClick={(e) => e.stopPropagation()}>
+				<div className="flex px-1 py-2" onClick={(e) => e.stopPropagation()}>
+					<RenewDocument data={row.original} />
 					<Dialog>
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<DialogTrigger asChild>
 									<Button
 										variant="outline"
-										className="flex items-center bg-none text-xs text-gray-500 shadow-none hover:text-green-700 border-none group-hover:transparent hover:bg-transparent cursor-pointer hover:shadow-none bg-transparent h-fit w-0 p-0"
+										className="group-hover:transparent flex h-fit w-0 cursor-pointer items-center border-none bg-transparent bg-none p-0 text-xs text-gray-500 shadow-none hover:bg-transparent hover:text-black hover:shadow-none"
 									>
-										<History className="m-0 p-0 h-5 w-5" strokeWidth={1.5} />
-									</Button>
-								</DialogTrigger>
-							</TooltipTrigger>
-							<TooltipContent>
-								<span>renew</span>
-							</TooltipContent>
-						</Tooltip>
-						<DialogContent className="sm:max-w-[425px]">
-							<DialogHeader>
-								<DialogTitle>Edit profile</DialogTitle>
-								<DialogDescription>
-									Make changes to your profile here. Click save when you&apos;re
-									done.
-								</DialogDescription>
-							</DialogHeader>
-							<div className="grid gap-4">
-								<div className="grid gap-3"></div>
-								<div className="grid gap-3"></div>
-							</div>
-							<DialogFooter>
-								<DialogClose asChild>
-									<Button variant="outline">Cancel</Button>
-								</DialogClose>
-								<Button type="submit">Save changes</Button>
-							</DialogFooter>
-						</DialogContent>
-					</Dialog>
-					<Dialog>
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<DialogTrigger asChild>
-									<Button
-										variant="outline"
-										className="flex items-center bg-none text-xs text-gray-500 shadow-none hover:text-black border-none group-hover:transparent hover:bg-transparent cursor-pointer hover:shadow-none bg-transparent h-fit w-0 p-0"
-									>
-										<Pencil className="m-0 p-0 h-5 w-5" strokeWidth={1.5} />
+										<Pencil className="m-0 h-5 w-5 p-0" strokeWidth={1.5} />
 									</Button>
 								</DialogTrigger>
 							</TooltipTrigger>
@@ -222,9 +179,9 @@ const columns: ColumnDef<Document>[] = [
 								<DialogTrigger asChild>
 									<Button
 										variant="outline"
-										className="flex items-center bg-none text-xs text-gray-500 shadow-none hover:text-red-700 border-none group-hover:transparent hover:bg-transparent cursor-pointer hover:shadow-none bg-transparent h-fit w-0 p-0"
+										className="group-hover:transparent flex h-fit w-0 cursor-pointer items-center border-none bg-transparent bg-none p-0 text-xs text-gray-500 shadow-none hover:bg-transparent hover:text-red-700 hover:shadow-none"
 									>
-										<Archive className="m-0 p-0 h-5 w-5" strokeWidth={1.5} />
+										<Archive className="m-0 h-5 w-5 p-0" strokeWidth={1.5} />
 									</Button>
 								</DialogTrigger>
 							</TooltipTrigger>
