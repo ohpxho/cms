@@ -18,8 +18,8 @@ const getDocuments = async () => {
 		);
 		return {
 			...document,
-			date_issued: formattedDateIssued,
-			date_expired: formattedDateExpiration,
+			formatted_date_issued: formattedDateIssued,
+			formatted_date_expired: formattedDateExpiration,
 			status,
 			due,
 		};

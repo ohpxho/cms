@@ -13,8 +13,6 @@ interface PropType {
 export default function RenewDocument({ data }: PropType) {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
-	console.log(data);
-
 	const onClick = () => {
 		setIsOpen(true);
 	};

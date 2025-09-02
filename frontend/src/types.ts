@@ -23,4 +23,6 @@ export interface Document {
 	updated_by: User;
 	last_sent_email?: Date;
 	desc?: string;
+	formatted_date_issued?: string;
+	formatted_date_expired?: string;
 }

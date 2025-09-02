@@ -33,13 +33,13 @@ export default function ViewDocument({ id, setId, data }: PropTypes) {
 		<Dialog open={id != null ? true : false} onOpenChange={() => setId(null)}>
 			<DialogContent className="sm:max-w-[550px]">
 				<DialogHeader>
-					<DialogTitle className="flex gap-2 items-center">
+					<DialogTitle className="flex items-center gap-2">
 						{/* <FileMinus strokeWidth={2} className="" />{" "} */}
 						<div className="flex flex-col gap-1">
 							<div className="flex gap-2">
 								<span className="text-2xl">{data?.name}</span>
 							</div>
-							<span className=" font-normal">{data?.issuing_authority}</span>
+							<span className="font-normal">{data?.issuing_authority}</span>
 						</div>
 					</DialogTitle>
 					<DialogDescription>
@@ -58,15 +58,15 @@ export default function ViewDocument({ id, setId, data }: PropTypes) {
 							<div className="flex">
 								<div className="flex w-1/2 flex-col gap-2 text-black">
 									<span className="text-gray-400">Issued on</span>
-									<div className="flex gap-2 items-center">
-										<span>{`${data?.date_issued}`}</span>
+									<div className="flex items-center gap-2">
+										<span>{`${data?.formatted_date_issued}`}</span>
 										<ClockArrowDown strokeWidth={1} className="h-5 w-5" />
 									</div>
 								</div>
 								<div className="flex w-1/2 flex-col gap-2 text-black">
 									<span className="text-gray-400">Expired on</span>
-									<div className="flex gap-2 items-center">
-										<span>{`${data?.date_expired}`}</span>
+									<div className="flex items-center gap-2">
+										<span>{`${data?.formatted_date_expired}`}</span>
 										<ClockAlert strokeWidth={1} className="h-5 w-5" />
 									</div>
 								</div>
@@ -81,7 +81,7 @@ export default function ViewDocument({ id, setId, data }: PropTypes) {
 										rel="noopener noreferrer"
 										className="flex items-center gap-2 text-blue-600 hover:underline"
 									>
-										<FileMinus className="w-5 h-5" />
+										<FileMinus className="h-5 w-5" />
 										<span>{getFileNameFromAttachment(data?.attachment)}</span>
 									</a>
 								) : (
@@ -92,7 +92,7 @@ export default function ViewDocument({ id, setId, data }: PropTypes) {
 							<div className="flex flex-col gap-2">
 								<div className="overflow-x-auto rounded border border-gray-100">
 									<div className="w-full rounded">
-										<div className="flex bg-gray-200 justify-center py-2 mb-4">
+										<div className="mb-4 flex justify-center bg-gray-200 py-2">
 											<span className="font-semibold text-gray-700">
 												Previous Records
 											</span>
@@ -107,12 +107,12 @@ export default function ViewDocument({ id, setId, data }: PropTypes) {
 							</div>
 						</div>
 						{/* Created By Avatar in Footer */}
-						<DialogFooter className="flex justify-between items-center mt-4 border-t pt-4">
-							<div className="flex items-center w-full gap-2">
+						<DialogFooter className="mt-4 flex items-center justify-between border-t pt-4">
+							<div className="flex w-full items-center gap-2">
 								{data?.created_by && (
 									<div className="flex items-center gap-2">
-										<span className="inline-block p-2 rounded-full bg-blue-300 overflow-hidden">
-											<span className="flex items-center justify-center text-xs font-semibold text-blue-700 rounded-sm">
+										<span className="inline-block overflow-hidden rounded-full bg-blue-300 p-2">
+											<span className="flex items-center justify-center rounded-sm text-xs font-semibold text-blue-700">
 												{data?.created_by?.name
 													? data.created_by.name
 															.split(" ")
@@ -129,7 +129,7 @@ export default function ViewDocument({ id, setId, data }: PropTypes) {
 									</div>
 								)}
 							</div>
-							<div className="flex gap-2 w-full  items-center justify-end">
+							<div className="flex w-full items-center justify-end gap-2">
 								<MailWarning strokeWidth={1} className="h-5 w-5" />
 								<span>No email notification sent yet</span>
 							</div>

@@ -79,12 +79,12 @@ export default function LoginPage() {
 
 	return (
 		<div
-			className="min-h-screen flex items-center text-sm justify-center"
+			className="flex min-h-screen items-center justify-center text-sm"
 			style={{ backgroundColor: "var(--background)" }}
 		>
 			<Toaster richColors position="bottom-center" />
 			<Card
-				className="w-full max-w-md relative"
+				className="relative w-full max-w-md"
 				style={{
 					backgroundColor: "var(--card)",
 					color: "var(--card-foreground)",
@@ -106,7 +106,7 @@ export default function LoginPage() {
 					<Form {...form}>
 						<form
 							onSubmit={form.handleSubmit(onSubmit)}
-							className="flex flex-col gap-5 mt-2"
+							className="mt-2 flex flex-col gap-5"
 						>
 							<FormField
 								control={form.control}
@@ -162,12 +162,12 @@ export default function LoginPage() {
 									</FormItem>
 								)}
 							/>
-							<div className="flex items-center justify-between text-sm mt-1">
+							<div className="mt-1 flex items-center justify-between text-sm">
 								<FormField
 									control={form.control}
 									name="remember"
 									render={({ field }) => (
-										<FormItem className="flex flex-row items-center space-x-2 space-y-0">
+										<FormItem className="flex flex-row items-center space-y-0 space-x-2">
 											<FormControl>
 												<Checkbox
 													id="remember"
@@ -199,7 +199,7 @@ export default function LoginPage() {
 									color: "var(--primary-foreground)",
 									border: "none",
 								}}
-								className="mt-3 font-semibold text-base hover:brightness-90 focus:ring-2 focus:ring-[var(--ring)]"
+								className="mt-3 text-base font-semibold hover:brightness-90 focus:ring-2 focus:ring-[var(--ring)]"
 								disabled={isLoading ? true : false}
 							>
 								{isLoading ? (

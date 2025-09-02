@@ -100,6 +100,17 @@ export default function FormDialog({
 		mode: "onChange",
 	});
 
+	useEffect(() => {
+		if (data) {
+			console.log(data);
+			form.reset({
+				name: data.name || "",
+				issuing_authority: data.issuing_authority || "",
+				category: data.category.id.toString() || "",
+			});
+		}
+	}, [data]);
+
 	const handleNext = async () => {
 		let isValid = false;
 
@@ -192,6 +203,7 @@ export default function FormDialog({
 														<Input
 															placeholder="e.g., License, Subscriptions, Certificate"
 															{...field}
+															disabled={mode == "add" ? false : true}
 														/>
 													</FormControl>
 													<FormMessage className="text-xs" />
@@ -213,6 +225,7 @@ export default function FormDialog({
 														<Input
 															placeholder="e.g., Suppliers, Government Offices"
 															{...field}
+															disabled={mode == "add" ? false : true}
 														/>
 													</FormControl>
 													<FormMessage className="text-xs" />
@@ -229,7 +242,7 @@ export default function FormDialog({
 													<FormControl>
 														{mode == "add" ? (
 															<Combobox
-																options={categories.map((category) => ({
+																options={categories!.map((category) => ({
 																	value: category.id.toString(),
 																	label: category.name,
 																}))}
@@ -253,8 +266,8 @@ export default function FormDialog({
 																		label: data?.category.name || "",
 																	},
 																]}
-																value={data?.category.id.toString() || ""}
 																onValueChange={field.onChange}
+																value={field.value?.toString() || ""}
 																disabled={true}
 																placeholder="Select a category"
 																popoverWidth="100%"

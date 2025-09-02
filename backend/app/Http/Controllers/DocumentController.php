@@ -62,4 +62,42 @@ class DocumentController extends Controller
       return response()->json(['response' => false, 'message' => 'Failed to create document and notification rule.', 'error' => $e->getMessage()], 422);
     }
   }
+
+  public function renew(StoreDocumentRequest $doc, StoreNotificationRules $notif)
+  {
+    DB:beginTransaction();
+
+    try {
+      $validated_doc = $doc->validated();
+
+      if ($doc->hasFile('attachment')) {
+        $path = $doc->file('attachment')->store('docs', 'public');
+        if (!$path) {
+          return response()->json(['response' => false, 'message' => 'Failed to upload the attachment.'], 422);
+        }
+        $validated_doc["attachment"] = $path;
+      }
+
+      $user = Auth::user();
+      $validated_doc["updated_by"] = $user->id;
+
+      $document = Document::create($validated_doc);
+
+      $validated_notif = $notif->validated();
+      $validated_notif['document_id'] = $document->id;
+      $document->rule()->create($validated_notif);
+
+      DB::commit();
+
+      $document->load(['category', 'updatedBy', 'createdBy', 'rule']);
+      return new DocumentResource($document);
+    } catch (\Exception $e) {
+      DB::rollback();
+      \Log::error('Document creation failed:', [
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+      ]);
+      return response()->json(['response' => false, 'message' => 'Failed to renew the document.', 'error' => $e->getMessage()], 422);
+    }
+  }
 }
