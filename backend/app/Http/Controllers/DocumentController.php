@@ -70,6 +70,9 @@ class DocumentController extends Controller
     try {
       $validated_doc = $doc->validated();
 
+      $existing_doc = Document::findOrFail($validated_doc['id']);
+
+
       if ($doc->hasFile('attachment')) {
         $path = $doc->file('attachment')->store('docs', 'public');
         if (!$path) {

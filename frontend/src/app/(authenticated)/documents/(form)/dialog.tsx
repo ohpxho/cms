@@ -107,6 +107,11 @@ export default function FormDialog({
 				name: data.name || "",
 				issuing_authority: data.issuing_authority || "",
 				category: data.category.id.toString() || "",
+				notify_before: data.notification_rules?.notify_before || 0,
+				frequency:
+					(data.notification_rules?.frequency as Frequency) || undefined,
+				time_unit:
+					(data.notification_rules?.time_unit as TimeUnit) || undefined,
 			});
 		}
 	}, [data]);

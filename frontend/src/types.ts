@@ -11,6 +11,12 @@ export interface Category {
 	desc: string | null;
 }
 
+export interface NotificationRules {
+	frequency: string;
+	notify_before: number;
+	time_unit: string;
+}
+
 export interface Document {
 	id: number;
 	name: string;
@@ -25,4 +31,5 @@ export interface Document {
 	desc?: string;
 	formatted_date_issued?: string;
 	formatted_date_expired?: string;
+	notification_rules?: NotificationRules;
 }
