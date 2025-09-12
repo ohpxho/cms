@@ -43,17 +43,6 @@ export default function ViewDocument({ id, setId, data }: PropTypes) {
 						</div>
 					</DialogTitle>
 					<DialogDescription>
-						{/* <div className="flex gap-2 mt-4">
-							<Button className="text-xs bg-transparent text-green-700 rounded-sm">
-								<RefreshCcw />
-								<span>Renew</span>
-							</Button>
-							<Button className="bg-gray-200 text-black">
-								<Pencil />
-								<span>Edit</span>
-							</Button>
-						</div> */}
-
 						<div className="mt-4 flex flex-col gap-8">
 							<div className="flex">
 								<div className="flex w-1/2 flex-col gap-2 text-black">

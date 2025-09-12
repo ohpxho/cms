@@ -44,7 +44,7 @@ export default function DocumentsPage() {
 				<Tabs defaultValue="open" className="w-full">
 					<div className="flex items-center justify-between">
 						<div>
-							<h2 className="font-bold text-2xl">Documents</h2>
+							<h2 className="text-2xl font-bold">Documents</h2>
 							<span className="text-gray-500">
 								Manage you for expiry documents.
 							</span>
@@ -52,7 +52,7 @@ export default function DocumentsPage() {
 						<TabsList className="bg-transparent">
 							<TabsTrigger
 								value="open"
-								className="flex text-xs items-center h-full data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-gray-700  text-gray-400 hover:text-gray-700 cursor-pointer"
+								className="flex h-full cursor-pointer items-center text-xs text-gray-400 hover:text-gray-700 data-[state=active]:bg-transparent data-[state=active]:text-gray-700 data-[state=active]:shadow-none"
 							>
 								<span>Ongoing (9)</span>
 							</TabsTrigger>
@@ -61,13 +61,13 @@ export default function DocumentsPage() {
 
 							<TabsTrigger
 								value="archived"
-								className="flex text-xs items-center h-full data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-gray-700  text-gray-400 hover:text-gray-700 cursor-pointer"
+								className="flex h-full cursor-pointer items-center text-xs text-gray-400 hover:text-gray-700 data-[state=active]:bg-transparent data-[state=active]:text-gray-700 data-[state=active]:shadow-none"
 							>
 								<span>Archive (12)</span>
 							</TabsTrigger>
 						</TabsList>
 					</div>
-					<TabsContent value="open" className="w-full mt-4">
+					<TabsContent value="open" className="mt-4 w-full">
 						<DocumentsTable
 							categories={categories?.data || []}
 							documents={documents || []}

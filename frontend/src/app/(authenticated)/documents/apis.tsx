@@ -45,4 +45,6 @@ const getCategories = async () => {
 	return response.data;
 };
 
-export { getDocuments, addDocument, getCategories };
+const renewDocument = async (data: FormData) => {};
+
+export { getDocuments, addDocument, getCategories, renewDocument };

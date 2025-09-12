@@ -11,8 +11,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
   return new UserResource($request->user()->load(['departments']));
 });
 
-Route::group(['middleware' => ['auth:sanctum']], function() {
+Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::get('categories', [CategoryController::class, 'index']);
   Route::get('documents', [DocumentController::class, 'index']);
   Route::post('document', [DocumentController::class, 'store']);
+  Route::put('document/{document}', [DocumentController::class, 'update']);
 });

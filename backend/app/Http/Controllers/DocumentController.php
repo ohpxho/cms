@@ -29,24 +29,24 @@ class DocumentController extends Controller
     DB::beginTransaction();
 
     try {
-      $validated_doc = $doc->validated();
+      $validatedDocument = $doc->validated();
 
       if ($doc->hasFile('attachment')) {
         $path = $doc->file('attachment')->store('docs', 'public');
         if (!$path) {
           return response()->json(['response' => false, 'message' => 'Failed to upload the attachment.'], 422);
         }
-        $validated_doc["attachment"] = $path;
+        $validatedDocument["attachment"] = $path;
       }
 
       $user = Auth::user();
-      $validated_doc["created_by"] = $user->id;
+      $validatedDocument["created_by"] = $user->id;
 
-      $document = Document::create($validated_doc);
+      $document = Document::create($validatedDocument);
 
-      $validated_notif = $notif->validated();
-      $validated_notif['document_id'] = $document->id;
-      $document->rule()->create($validated_notif);
+      $validatedNotification = $notif->validated();
+      $validatedNotification['document_id'] = $document->id;
+      $document->rule()->create($validatedNotification);
 
       DB::commit();
 
@@ -63,44 +63,59 @@ class DocumentController extends Controller
     }
   }
 
-  public function renew(StoreDocumentRequest $doc, StoreNotificationRules $notif)
+  public function update(StoreDocumentRequest $request, StoreNotificationRules $notif, Document $document)
   {
-    DB:beginTransaction();
-
+    DB::beginTransaction();
     try {
-      $validated_doc = $doc->validated();
+      $validatedRequest = $request->validated();
 
-      $existing_doc = Document::findOrFail($validated_doc['id']);
+      if ($request->hasFile('attachment')) {
+        $path = $request->file('attachment')->store('docs', 'public');
 
-
-      if ($doc->hasFile('attachment')) {
-        $path = $doc->file('attachment')->store('docs', 'public');
         if (!$path) {
           return response()->json(['response' => false, 'message' => 'Failed to upload the attachment.'], 422);
         }
-        $validated_doc["attachment"] = $path;
+
+        $validatedRequest["attachment"] = $path;
       }
 
       $user = Auth::user();
-      $validated_doc["updated_by"] = $user->id;
+      $validatedRequest["updated_by"] = $user->id;
 
-      $document = Document::create($validated_doc);
+      $document->update($validatedRequest);
 
-      $validated_notif = $notif->validated();
-      $validated_notif['document_id'] = $document->id;
-      $document->rule()->create($validated_notif);
+      $validatedNotification = $notif->validated();
+      $validatedNotification['document_id'] = $document->id;
+      $document->rule()->updateOrCreate(['document_id' => $document->id], $validatedNotification);
 
       DB::commit();
 
       $document->load(['category', 'updatedBy', 'createdBy', 'rule']);
       return new DocumentResource($document);
+
     } catch (\Exception $e) {
       DB::rollback();
-      \Log::error('Document creation failed:', [
+      \Log::error('Document update failed:', [
         'error' => $e->getMessage(),
         'trace' => $e->getTraceAsString()
       ]);
-      return response()->json(['response' => false, 'message' => 'Failed to renew the document.', 'error' => $e->getMessage()], 422);
+      return response()->json(['response' => false, 'message' => 'Failed to update document and notification rule.', 'error' => $e->getMessage()], 422);
+    }
+  }
+
+  public function renew(StoreDocumentRequest $request, StoreNotificationRules $notif, Document $document)
+  {
+    DB::beginTransaction();
+    try {
+      $validatedRequest = $request->validated();
+    } catch (\Exception $e) {
+      DB::rollback();
+      \Log::error("Dcoument renew failed:", [
+          'error' => $e->getMessage(),
+          'trace' => $e->getTraceAsString()
+      ]);
+
+      return response()->json(['response' => false, 'message' => "Failed to renew document and notification rule.", 'error' => $e->getMessage()], 422);
     }
   }
 }

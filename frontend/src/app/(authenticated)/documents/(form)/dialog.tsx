@@ -14,9 +14,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
-import { AxiosError, isAxiosError } from "axios";
 import {
 	Form,
 	FormControl,
@@ -42,7 +39,7 @@ import { LoaderCircle, Info, BellRing, Upload, File } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
-import { addDocument } from "../apis";
+import { addDocument, renewDocument } from "../apis";
 import { TimeUnit, Frequency } from "@/enums";
 import { Category, Document } from "@/types";
 
@@ -153,7 +150,10 @@ export default function FormDialog({
 
 		if (data.attachment) formData.append("attachment", data.attachment);
 
-		const response = await addDocument(formData);
+		let response;
+
+		if (mode == "add") response = await addDocument(formData);
+		else response = await renewDocument(formData);
 
 		if (!response.success) {
 			toast.error("Failed to Save the Document", {

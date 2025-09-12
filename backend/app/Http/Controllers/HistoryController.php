@@ -27,6 +27,12 @@ class HistoryController extends Controller
      */
     public function store(StoreHistoryRequest $request)
     {
+        try {
+            $validatedReq = $request->validated();
+
+        } catch(\Exception e) {
+
+        }
     }
 
     /**
