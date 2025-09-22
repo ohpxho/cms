@@ -10,16 +10,17 @@ class NotificationRules extends Model
 {
     /** @use HasFactory<\Database\Factories\NotificationRulesFactory> */
     use HasFactory;
-    
+
     protected $fillable = [
       'notify_before',
       'time_unit',
       'frequency',
     ];
-    
+
     protected $with = ['document'];
 
-    public function document() {
-      return $this->belongsTo(Document::class, 'document_id');
+    public function document()
+    {
+        return $this->belongsTo(Document::class, 'document_id');
     }
 }
