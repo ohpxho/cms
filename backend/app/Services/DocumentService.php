@@ -17,9 +17,9 @@ class DocumentService
 
         DB::beginTransaction();
         try {
-            $doc = $docRepo->create($data->doc);
-            $data->rules["document_id"] = $doc->id;
-            $rulesRepo->create($data->rules);
+            $doc = $docRepo->create($data["doc"]);
+            $data["rules"]["document_id"] = $doc->id;
+            $rulesRepo->create($data["rules"]);
 
             DB::commit();
 
@@ -33,7 +33,7 @@ class DocumentService
               'trace' => $e->getTraceAsString()
             ]);
 
-            $response["error"] = e->getMessage();
+            $response["error"] = $e->getMessage();
             return $response;
         }
     }
@@ -46,8 +46,8 @@ class DocumentService
 
         DB::beginTransaction();
         try {
-            $doc = $docRepo->update($id, $data->doc);
-            $rules = $rulesRepo->update($id, $data->notif);
+            $doc = $docRepo->update($id, $data["doc"]);
+            $rules = $rulesRepo->update($id, $data["rules"]);
             DB::commit();
 
             $response["data"] = $doc->load(["category", "updatedBy", "createdBy", "rule"]);
@@ -72,9 +72,9 @@ class DocumentService
 
         DB::beginTransaction();
         try {
-            $history = $historyRepo->create($data->oldDoc);
-            $doc = $docRepo->update($id, $data->newDoc);
-            $rules = $rulesRepo->update($id, $data->rules);
+            $history = $historyRepo->create($data["oldDoc"]);
+            $doc = $docRepo->update($id, $data["newDoc"]);
+            $rules = $rulesRepo->update($id, $data["rules"]);
 
             DB::commit();
 

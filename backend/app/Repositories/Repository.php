@@ -20,7 +20,7 @@ class Repository
 
     public function update(int $id, array $data)
     {
-        $doc = $this->$model->findOrFail($id);
+        $doc = $this->model->findOrFail($id);
         $doc->update($data);
 
         return $doc->fresh();

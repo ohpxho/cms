@@ -53,11 +53,11 @@ class DocumentController extends Controller
         $docService = new DocumentService();
         $createdDoc = $docService->createDocument($data);
 
-        if (!array_key_exists("error", $createdDoc) || is_null($createdDoc["error"])) {
+        if (array_key_exists("error", $createdDoc) && !is_null($createdDoc["error"])) {
             return response()->json([
               'response' => false,
               'message' => 'Failed to create document and notification rule.',
-              'error' => $createdDoc->error
+              'error' => $createdDoc["error"]
             ], 422);
         }
 
@@ -91,17 +91,17 @@ class DocumentController extends Controller
         $validatedDocument["attachment"] = $path;
         $id = $document->id;
         $data = [
-          "doc" => $doc,
-          "rules" => $notif,
+          "doc" => $validatedDocument,
+          "rules" => $validatedNotification,
         ];
         $docService  = new DocumentService();
         $updatedDoc = $docService->updateDocument($id, $data);
 
-        if (!array_key_exists("error", $updatedDoc) || is_null($updatedDoc["error"])) {
+        if (array_key_exists("error", $updatedDoc) || !is_null($updatedDoc["error"])) {
             return response()->json([
               "response" => false,
               "message" => "Failed to update document and notification rule.",
-              "error" => $e->getMessage()
+              "error" => $updatedDoc["error"]
             ], 422);
         }
 
@@ -136,18 +136,18 @@ class DocumentController extends Controller
         $validatedDocument["attachment"] = $path;
         $id = $document->id;
         $data = [
-          "newDoc" => $doc,
-          "oldDoc" => $document->all(),
-          "rules" => $notif,
+          "newDoc" => $validatedDocument,
+          "oldDoc" => $document->toArray(),
+          "rules" => $validatedNotification,
         ];
         $docService  = new DocumentService();
         $renewedDoc = $docService->renewDocument($id, $data);
 
-        if (!array_key_exists("error", $renewedDoc) || is_null($renewedDoc["error"])) {
+        if (array_key_exists("error", $renewedDoc) && !is_null($renewedDoc["error"])) {
             return response()->json([
               "response" => false,
               "message" => "Failed to update document and notification rule.",
-              "error" => $e->getMessage()
+              "error" => $renewedDoc["error"]
             ], 422);
         }
 
