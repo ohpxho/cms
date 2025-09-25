@@ -44,6 +44,7 @@ import { TimeUnit, Frequency } from "@/enums";
 import { Category, Document } from "@/types";
 
 const step1DocumentSchema = z.object({
+	id: z.string().optional(),
 	name: z.string("Name is required").min(1),
 	issuing_authority: z.string("Issuing Authority is required").min(1),
 	date_issued: z.date("Date issued is required"),
@@ -128,32 +129,29 @@ export default function FormDialog({
 		if (isValid) setCurrentStep(currentStep + 1);
 	};
 
-	const onSubmit = async (data: documentSchemaType) => {
+	const onSubmit = async (dt: documentSchemaType) => {
 		setIsLoading(true);
 
 		const formData = new FormData();
-		formData.append("name", data.name);
-		formData.append("issuing_authority", data.issuing_authority);
-		formData.append("remarks", data.remarks || "");
-		formData.append("category_id", data.category);
-		formData.append(
-			"date_issued",
-			data.date_issued.toISOString().split("T")[0]
-		);
+
+		formData.append("name", dt.name);
+		formData.append("issuing_authority", dt.issuing_authority);
+		formData.append("remarks", dt.remarks || "");
+		formData.append("category_id", dt.category);
+		formData.append("date_issued", dt.date_issued.toISOString().split("T")[0]);
 		formData.append(
 			"date_expired",
-			data.date_expired.toISOString().split("T")[0]
+			dt.date_expired.toISOString().split("T")[0]
 		);
-		formData.append("notify_before", data.notify_before.toString());
-		formData.append("time_unit", data.time_unit);
-		formData.append("frequency", data.frequency);
+		formData.append("notify_before", dt.notify_before.toString());
+		formData.append("time_unit", dt.time_unit);
+		formData.append("frequency", dt.frequency);
 
-		if (data.attachment) formData.append("attachment", data.attachment);
+		if (dt.attachment) formData.append("attachment", dt.attachment);
 
 		let response;
-
 		if (mode == "add") response = await addDocument(formData);
-		else response = await renewDocument(formData);
+		else response = await renewDocument(Number(data?.id || 0), formData);
 
 		if (!response.success) {
 			toast.error("Failed to Save the Document", {
@@ -198,6 +196,7 @@ export default function FormDialog({
 									</div>
 
 									<div className="space-y-6">
+										{}
 										<FormField
 											control={form.control}
 											name="name"

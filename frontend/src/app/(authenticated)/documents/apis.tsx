@@ -45,6 +45,17 @@ const getCategories = async () => {
 	return response.data;
 };
 
-const renewDocument = async (data: FormData) => {};
+const renewDocument = async (id: number, data: FormData) => {
+	try {
+		const response = await axios.post(`/api/documents/${id}/renew`, data, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
+		return { success: true, data: response.data };
+	} catch (error) {
+		return { success: false, error: error };
+	}
+};
 
 export { getDocuments, addDocument, getCategories, renewDocument };
