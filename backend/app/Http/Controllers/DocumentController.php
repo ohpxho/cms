@@ -47,7 +47,7 @@ class DocumentController extends Controller
 
         $data = [
           "doc" => $validatedDocument,
-          "rules" => validatedNotification,
+          "rules" => $validatedNotification,
         ];
 
         $docService = new DocumentService();

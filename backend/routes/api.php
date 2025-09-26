@@ -16,5 +16,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('documents', [DocumentController::class, 'index']);
     Route::post('document', [DocumentController::class, 'store']);
     Route::put('document/{document}', [DocumentController::class, 'update']);
-    Route::post('documents/{document}/renew', [DocumentController::class, 'renew']);
+    Route::post('document/{document}/renew', [DocumentController::class, 'renew']);
 });
