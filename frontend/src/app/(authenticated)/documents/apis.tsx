@@ -40,14 +40,22 @@ const addDocument = async (data: FormData) => {
 	}
 };
 
-const getCategories = async () => {
-	const response = await axios.get("/api/categories");
-	return response.data;
+const editDocument = async (id: number, data: FormData) => {
+	try {
+		const response = await axios.put(`/api/document/${id}`, data, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
+		return { success: true, data: response.data };
+	} catch (error) {
+		return { success: false, data: error };
+	}
 };
 
 const renewDocument = async (id: number, data: FormData) => {
 	try {
-		const response = await axios.post(`/api/documents/${id}/renew`, data, {
+		const response = await axios.post(`/api/document/${id}/renew`, data, {
 			headers: {
 				"Content-Type": "multipart/form-data",
 			},
@@ -58,4 +66,15 @@ const renewDocument = async (id: number, data: FormData) => {
 	}
 };
 
-export { getDocuments, addDocument, getCategories, renewDocument };
+const getCategories = async () => {
+	const response = await axios.get("/api/categories");
+	return response.data;
+};
+
+export {
+	getDocuments,
+	addDocument,
+	getCategories,
+	renewDocument,
+	editDocument,
+};

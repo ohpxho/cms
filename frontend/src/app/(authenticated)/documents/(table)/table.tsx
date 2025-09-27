@@ -47,7 +47,7 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 		date_issued: false,
 	});
 	const [rowSelection, setRowSelection] = useState({});
-	const table = useReactTable({
+	const table = useReactTable<Document>({
 		data: documents,
 		columns,
 		onSortingChange: setSorting,
@@ -63,6 +63,9 @@ export default function DocumentsTable({ categories, documents }: PropTypes) {
 			columnFilters,
 			columnVisibility,
 			rowSelection,
+		},
+		meta: {
+			categories,
 		},
 	});
 

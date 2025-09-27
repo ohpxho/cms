@@ -33,3 +33,10 @@ export interface Document {
 	formatted_date_expired?: string;
 	notification_rules?: NotificationRules;
 }
+
+// Extend TableMeta to include categories
+declare module '@tanstack/react-table' {
+	interface TableMeta<TData extends RowData> {
+		categories?: Category[];
+	}
+}

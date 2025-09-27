@@ -39,7 +39,7 @@ import { LoaderCircle, Info, BellRing, Upload, File } from "lucide-react";
 import { Combobox } from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
-import { addDocument, renewDocument } from "../apis";
+import { addDocument, renewDocument, editDocument } from "../apis";
 import { TimeUnit, Frequency } from "@/enums";
 import { Category, Document } from "@/types";
 
@@ -100,7 +100,6 @@ export default function FormDialog({
 
 	useEffect(() => {
 		if (data) {
-			console.log(data);
 			form.reset({
 				name: data.name || "",
 				issuing_authority: data.issuing_authority || "",
@@ -151,6 +150,8 @@ export default function FormDialog({
 
 		let response;
 		if (mode == "add") response = await addDocument(formData);
+		else if (mode == "edit")
+			response = await editDocument(Number(data?.id || 0), formData);
 		else response = await renewDocument(Number(data?.id || 0), formData);
 
 		if (!response.success) {
@@ -207,7 +208,7 @@ export default function FormDialog({
 														<Input
 															placeholder="e.g., License, Subscriptions, Certificate"
 															{...field}
-															disabled={mode == "add" ? false : true}
+															disabled={mode == "renew" ? true : false}
 														/>
 													</FormControl>
 													<FormMessage className="text-xs" />
@@ -229,7 +230,7 @@ export default function FormDialog({
 														<Input
 															placeholder="e.g., Suppliers, Government Offices"
 															{...field}
-															disabled={mode == "add" ? false : true}
+															disabled={mode == "renew" ? true : false}
 														/>
 													</FormControl>
 													<FormMessage className="text-xs" />
@@ -244,13 +245,17 @@ export default function FormDialog({
 												<FormItem>
 													<FormLabel className="">Category</FormLabel>
 													<FormControl>
-														{mode == "add" ? (
+														{mode !== "renew" ? (
 															<Combobox
 																options={categories!.map((category) => ({
 																	value: category.id.toString(),
 																	label: category.name,
 																}))}
-																value={field.value?.toString() || ""}
+																value={
+																	field.value?.toString() ||
+																	data?.category?.id.toString() ||
+																	""
+																}
 																onValueChange={field.onChange}
 																placeholder="Select a category"
 																popoverWidth="100%"
@@ -306,7 +311,11 @@ export default function FormDialog({
 																		? typeof field.value === "string"
 																			? field.value
 																			: field.value.toISOString().split("T")[0]
-																		: ""
+																		: data && data.date_issued
+																			? new Date(data.date_issued)
+																					.toISOString()
+																					.split("T")[0]
+																			: ""
 																}
 																onChange={(e) =>
 																	field.onChange(
@@ -340,7 +349,11 @@ export default function FormDialog({
 																				: field.value
 																						.toISOString()
 																						.split("T")[0]
-																			: ""
+																			: data && data.date_expired
+																				? new Date(data.date_expired)
+																						.toISOString()
+																						.split("T")[0]
+																				: ""
 																	}
 																	onChange={(e) =>
 																		field.onChange(
