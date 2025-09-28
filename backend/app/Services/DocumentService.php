@@ -74,7 +74,7 @@ class DocumentService
         try {
             $history = $historyRepo->create($data["oldDoc"]);
             $doc = $docRepo->update($id, $data["newDoc"]);
-            $rules = $rulesRepo->update($id, $data["rules"]);
+            $rules = $rulesRepo->updateByDocument($doc->id, $data["rules"]);
 
             DB::commit();
 

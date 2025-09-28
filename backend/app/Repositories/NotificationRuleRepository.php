@@ -10,4 +10,12 @@ class NotificationRuleRepository extends Repository
     {
         parent::__construct(NotificationRules::class);
     }
+
+    public function updateByDocument(int $id, array $data) 
+    {
+      $rules = $this->model->where("document", $id)->first();       
+      $rules->update($data);
+
+      return $rules->fresh();    
+    }
 }
